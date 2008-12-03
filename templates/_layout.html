@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+    <style type="text/css">
+    body {
+      font-size:16px;
+      margin: 0;
+      font-family: Helvetica;
+      padding:0;
+      background:#333333;
+    }
+    
+    #toast {
+      background:#ffffff;
+    }
+    
+    ul {
+      margin:0;
+      padding:0;
+    }
+    
+    h1,p,li {
+      margin:0;
+      padding:10px;
+    }
+    
+    p {
+      padding:0.5em 10px;
+    }
+    
+    p.about {
+      margin-top:0;
+      padding-top:10px;
+      font-size:80%;
+      background:#333333;
+      color:#999999;
+    }
+    
+    a {
+      color: #999999;
+    }
+    
+    li {
+      border-bottom:1px solid #D9D9D9;
+    }
+
+    h1 {
+      font-size:100%;
+      background:#666666;
+      border-bottom:1px solid #333333;
+      color:#ffffff;
+    }
+    
+    li small,
+    li.gone {
+      font-size:80%;
+      color:#666666;
+    }
+    
+    </style>
+    <link rel="apple-touch-icon" href="/i/apple-touch-icon.png">
+    <title>{% block title %}Minimuni{% endblock %}</h1>
+  </head>
+  <body>
+    <div id="toast">
+    {% block content %}{% endblock %}
+    </div>
+  </body>
+</html>

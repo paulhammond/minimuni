@@ -1,0 +1,28 @@
+{% extends "_layout.html" %}
+
+{% block content %}
+  <h1>When should {{who}} leave for work?</h1>
+  <ul>
+  {% for train in trains %}
+    {% if train.is_past %}
+      <li class="gone">
+        The {{train.route_short}} 
+        {% if train.time %}
+          leaves in {{train.time}} min{{train.time|pluralize }}
+        {% else %} 
+          is leaving now
+        {% endif %}
+        from {{train.stop_short}}</li>
+    {% else %}
+      <li {% ifchanged train.is_past %}id="next"{% endifchanged %}>Go 
+        {% if train.timeleft %}
+          in <b>{{train.timeleft}}</b> minute{{train.timeleft|pluralize }}
+        {% else %}
+          <b>now</b>
+        {% endif %}
+        to get the <b>{{train.route}}</b><br><small>leaving in {{train.time}} min{{train.time|pluralize }} from {{train.stop}}</small></li>
+    {% endif %}
+  {% endfor %}
+  </ul>
+  <p class="about"><a href="/about/">Uh? What is this? Who is Paul?</a></p>
+{% endblock %}
