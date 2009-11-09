@@ -23,7 +23,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.ext.webapp import template
 from google.appengine.api import urlfetch
-from BeautifulSoup import BeautifulSoup
+import xml.etree.ElementTree as ET
 import os
 import re
 import logging
@@ -61,42 +61,21 @@ class Train:
 class Muni:
   def __init__(self):
     self.trains = []
-  
-  def addStop(self,url,distance):
     
+  def fetch(self,config):
+    url = 'http://www.nextbus.com/service/publicXMLFeed?command=predictionsForMultiStops&a=sf-muni'
+    for line in config['stops'].keys():
+      url = url + '&stops=' + line + '|null|' + config['stops'][line]['stop']
     result = urlfetch.fetch(url)
-    times = []
-    route = 'unknown'
-    stop = 'unknown'
     if result.status_code == 200:
-      soup = BeautifulSoup(result.content, convertEntities="html")
-      #logging.info(result.content)
-      try:
-        route = soup.find(text=re.compile('Route:')).findNext('b').string
-        stop = soup.find(text=re.compile('Stop:')).findNext('b').string
-        # this route
-        pos = soup.find(text=re.compile('Next vehicle')).findNext('table').findNext('table')
-        for i in range(0, 3):
-          pos = pos.findNext('tr')
-          time = pos.td.span.string.lstrip()
-          self.trains.append(Train(time,distance,route,stop))
-
-        # other routes
-        pos = soup.find(text=re.compile('other routes')).findNext('table')
-        for i in range(0, 6):
-          pos = pos.findNext('tr')
-          tds = pos.findAll('td')
-          
-          time = tds[0].div.font.b.string.lstrip()
-          route = tds[2].div.font.string.lstrip()
-          route = re.match('\((.*) (In|Out)bound to .*\)',route).group(1)
-          self.trains.append(Train(time,distance,route,stop))
-        
-      except AttributeError:
-        pass
-        
+      tree = ET.fromstring(result.content)
+      for p in tree.findall('predictions'):
+        distance = config['stops'][p.attrib.get('routeTag')]['distance']
+        for d in p.findall('direction'):
+          for r in d.findall('prediction'):
+            self.trains.append(Train(r.attrib.get('minutes'), distance, p.attrib.get('routeTitle'), p.attrib.get('stopTitle')))
     self.trains.sort()
-      
+
 
 class MainPage(webapp.RequestHandler):
   
@@ -104,26 +83,17 @@ class MainPage(webapp.RequestHandler):
     
     config = {
       'who': 'Paul',
-      'stops': [
-        {
-          'url': 'http://www.nextbus.com/wireless/miniPrediction.shtml?a=sf-muni&r=N&d=N__IB3&s=7318',
-          'distance': 6
-        },
-        {
-          'url': 'http://www.nextbus.com/wireless/miniPrediction.shtml?a=sf-muni&r=J&d=J__IB2&s=4006',
-          'distance': 8
-        },
-        {
-          'url': 'http://www.nextbus.com/wireless/miniPrediction.shtml?a=sf-muni&r=KT&d=KT__IB1&s=5726',
-          'distance': 10
-        }
-      ]
+      'stops': {
+        'N':  { 'stop': '7318', 'distance': 6 },
+        'J':  { 'stop': '4006', 'distance': 8 },
+        'KT': { 'stop': '5726', 'distance': 10 },
+        'L':  { 'stop': '5726', 'distance': 10 },
+        'M':  { 'stop': '5726', 'distance': 10 },
+      }
     }
     
     muni = Muni();
-    for stop in config['stops']:
-      muni.addStop(stop['url'],stop['distance'])
-    
+    muni.fetch(config);
     template_values = {
       'trains': muni.trains,
       'who': config['who'],
