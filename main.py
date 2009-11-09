@@ -47,6 +47,9 @@ class Train:
   def timeleft(self):
     return self.time - self.distance
     
+  def display(self):
+      return (self.timeleft() < 30)
+    
   def stop_short(self):
     return re.sub(r'\b(St|Ave)\b','',self.stop).replace('Sunset Tunnel East Portal','Sunset Tunnel')
     
