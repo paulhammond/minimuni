@@ -7,12 +7,17 @@
     {% if train.is_past %}
       <li class="gone">
         The {{train.route_short}} 
+        {% if train.show_destination %}
+          to {{train.destination}}
+        {% endif %}
+        
         {% if train.time %}
           leaves in {{train.time}} min{{train.time|pluralize }}
         {% else %} 
           is leaving now
         {% endif %}
-        from {{train.stop_short}}</li>
+        from {{train.stop_short}}
+      </li>
     {% else %}
       <li {% ifchanged train.is_past %}id="next"{% endifchanged %}>Go 
         {% if train.timeleft %}
@@ -20,7 +25,12 @@
         {% else %}
           <b>now</b>
         {% endif %}
-        to get the <b>{{train.route}}</b><br><small>leaving in {{train.time}} min{{train.time|pluralize }} from {{train.stop}}</small></li>
+        to get the <b>{{train.route}}</b><br><small>leaving in {{train.time}} min{{train.time|pluralize }} from {{train.stop}}
+        {% if train.show_destination %}
+          <br>going to {{train.destination}}
+        {% endif %}
+        </small>
+      </li>
     {% endif %}
   {% endfor %}
   </ul>

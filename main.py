@@ -30,12 +30,14 @@ import logging
 
 
 class Train:
-  def __init__(self, time, distance, route, stop):
+  def __init__(self, time, distance, route, stop, destination, expectedDestination):
     if(time == 'Arriving'):
       self.time = 0
     else:
       self.time = int(time)
     self.distance = distance
+    self.expectedDestination = expectedDestination
+    self.fullDestination = destination
     self.route = route.replace('KT-Ingleside/Third Street','T-Third').replace('M-Ocean View','M-Ocean')
     self.stop = stop.replace('Inbound','').replace('Intbound','').replace('Outbound','')
 
@@ -47,9 +49,15 @@ class Train:
     
   def stop_short(self):
     return re.sub(r'\b(St|Ave)\b','',self.stop).replace('Sunset Tunnel East Portal','Sunset Tunnel')
+    
+  def destination(self):
+    return self.fullDestination.replace('Inbound to','').replace('Outbound to','')
 
   def route_short(self):
     return self.route[0]
+
+  def show_destination(self):
+    return self.expectedDestination != self.fullDestination
 
   def __cmp__(self,other):
     if self.is_past() and other.is_past():
@@ -72,8 +80,10 @@ class Muni:
       for p in tree.findall('predictions'):
         distance = config['stops'][p.attrib.get('routeTag')]['distance']
         for d in p.findall('direction'):
+          expectedDestination = config['stops'][p.attrib.get('routeTag')]['destination']
+          destination = d.attrib.get('title')
           for r in d.findall('prediction'):
-            self.trains.append(Train(r.attrib.get('minutes'), distance, p.attrib.get('routeTitle'), p.attrib.get('stopTitle')))
+            self.trains.append(Train(r.attrib.get('minutes'), distance, p.attrib.get('routeTitle'), p.attrib.get('stopTitle'), destination, expectedDestination))
     self.trains.sort()
 
 
@@ -84,11 +94,11 @@ class MainPage(webapp.RequestHandler):
     config = {
       'who': 'Paul',
       'stops': {
-        'N':  { 'stop': '7318', 'distance': 6 },
-        'J':  { 'stop': '4006', 'distance': 8 },
-        'KT': { 'stop': '5726', 'distance': 10 },
-        'L':  { 'stop': '5726', 'distance': 10 },
-        'M':  { 'stop': '5726', 'distance': 10 },
+        'N':  { 'stop': '7318', 'distance': 6,  'destination': 'Inbound to Caltrain Depot'},
+        'J':  { 'stop': '4006', 'distance': 8,  'destination': 'Inbound to Embarcadero Station'},
+        'KT': { 'stop': '5726', 'distance': 10, 'destination': 'Inbound to Sunnydale & Bayshore'},
+        'L':  { 'stop': '5726', 'distance': 10, 'destination': 'Inbound to Embarcadero Station'},
+        'M':  { 'stop': '5726', 'distance': 10, 'destination': 'Inbound to Embarcadero Station'},
       }
     }
     
