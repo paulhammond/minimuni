@@ -94,11 +94,11 @@ class MainPage(webapp.RequestHandler):
     config = {
       'who': 'Paul',
       'stops': {
-        'N':  { 'stop': '7318', 'distance': 6,  'destination': 'Inbound to Caltrain Depot'},
-        'J':  { 'stop': '4006', 'distance': 8,  'destination': 'Inbound to Embarcadero Station'},
-        'KT': { 'stop': '5726', 'distance': 10, 'destination': 'Inbound to Sunnydale & Bayshore'},
-        'L':  { 'stop': '5726', 'distance': 10, 'destination': 'Inbound to Embarcadero Station'},
-        'M':  { 'stop': '5726', 'distance': 10, 'destination': 'Inbound to Embarcadero Station'},
+        'N':  { 'stop': '7318', 'distance': 2,  'destination': 'Inbound to Caltrain Depot'},
+        'J':  { 'stop': '4006', 'distance': 4,  'destination': 'Inbound to Embarcadero Station'},
+        'KT': { 'stop': '5726', 'distance': 6, 'destination': 'Inbound to Sunnydale & Bayshore'},
+        'L':  { 'stop': '5726', 'distance': 6, 'destination': 'Inbound to Embarcadero Station'},
+        'M':  { 'stop': '5726', 'distance': 6, 'destination': 'Inbound to Embarcadero Station'},
       }
     }
     
