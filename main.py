@@ -46,7 +46,7 @@ class Train:
     return self.time - self.distance
     
   def stop_short(self):
-    return re.sub(r'\b(St|Ave)\b','',self.stop)
+    return re.sub(r'\b(St|Ave)\b','',self.stop).replace('Sunset Tunnel East Portal','Sunset Tunnel')
 
   def route_short(self):
     return self.route[0]
