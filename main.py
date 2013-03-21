@@ -73,7 +73,7 @@ class Muni:
     self.trains = []
 
   def fetch(self,config):
-    url = 'http://www.nextbus.com/service/publicXMLFeed?command=predictionsForMultiStops&a=sf-muni'
+    url = 'http://webservices.nextbus.com/service/publicXMLFeed?command=predictionsForMultiStops&a=sf-muni'
     for line in config['stops'].keys():
       url = url + '&stops=' + line + '|null|' + config['stops'][line]['stop']
     result = urlfetch.fetch(url)
