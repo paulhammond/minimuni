@@ -2,6 +2,7 @@
 
 {% block content %}
   <h1>When should {{who}} leave for work?</h1>
+  <p class="about"><a href="/about/">Er, what is this minimuni thing? Who is {{who}}?</a></p>
   <ul>
   {% for train in trains %}
     {% if train.display %}
@@ -35,5 +36,4 @@
     {% endif %}
   {% endfor %}
   </ul>
-  <p class="about"><a href="/about/">Uh? What is this? Who is Paul?</a></p>
 {% endblock %}
