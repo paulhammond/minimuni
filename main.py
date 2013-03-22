@@ -90,7 +90,15 @@ class Muni:
 
 
 class MainPage(webapp.RequestHandler):
-  
+  def handle_exception(self, exception, debug_mode):
+      if debug_mode:
+          webapp.RequestHandler.handle_exception(self, exception, debug_mode)
+      else:
+          logging.exception(exception)
+          path = os.path.join(os.path.dirname(__file__), 'templates/500.html')
+          self.error(500)
+          self.response.out.write(template.render(path, {}))
+
   def get(self):
 
     config = {
@@ -119,10 +127,18 @@ class AboutPage(webapp.RequestHandler):
     path = os.path.join(os.path.dirname(__file__), 'templates/about.html')
     self.response.out.write(template.render(path, {}))
 
+class Error404Page(webapp.RequestHandler):
+  def get(self):
+    self.error(404)
+    path = os.path.join(os.path.dirname(__file__), 'templates/404.html')
+    self.response.out.write(template.render(path, {}))
+
+
 application = webapp.WSGIApplication([
   ('/', MainPage),
-  ('/about/', AboutPage)
-],debug=True)
+  ('/about/', AboutPage),
+  (r'.*', Error404Page),
+])
 
 def main():
   run_wsgi_app(application)
