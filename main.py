@@ -28,7 +28,6 @@ import os
 import re
 import logging
 
-
 class Train:
   def __init__(self, time, distance, route, stop, destination, expectedDestination):
     if(time == 'Arriving'):
@@ -43,16 +42,16 @@ class Train:
 
   def is_past(self):
     return (self.timeleft() < 0)
-  
+
   def timeleft(self):
     return self.time - self.distance
-    
+
   def display(self):
       return (self.timeleft() < 30)
-    
+
   def stop_short(self):
     return re.sub(r'\b(St|Ave)\b','',self.stop).replace('Sunset Tunnel East Portal','Sunset Tunnel')
-    
+
   def destination(self):
     return self.fullDestination.replace('Inbound to','').replace('Outbound to','')
 
@@ -72,7 +71,7 @@ class Train:
 class Muni:
   def __init__(self):
     self.trains = []
-    
+
   def fetch(self,config):
     url = 'http://www.nextbus.com/service/publicXMLFeed?command=predictionsForMultiStops&a=sf-muni'
     for line in config['stops'].keys():
@@ -93,7 +92,7 @@ class Muni:
 class MainPage(webapp.RequestHandler):
   
   def get(self):
-    
+
     config = {
       'who': 'Paul',
       'stops': {
@@ -104,14 +103,14 @@ class MainPage(webapp.RequestHandler):
         'M':  { 'stop': '5726', 'distance': 6, 'destination': 'Inbound to Embarcadero Station'},
       }
     }
-    
+
     muni = Muni();
     muni.fetch(config);
     template_values = {
       'trains': muni.trains,
       'who': config['who'],
     }
-    
+
     path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
     self.response.out.write(template.render(path, template_values))
 
