@@ -1,6 +1,6 @@
 # minimuni
 
-This is the source code behind [minimuni.paulhammond.org]. It runs on
+This is the source code behind [minimuni.paulhammond.org][minimuni]. It runs on
 Google App Engine.
 
 To get a dev environment set up:
